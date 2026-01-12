@@ -1,16 +1,21 @@
 import type { Coordinates } from "./Coordinates.type";
+import type { District } from "./District.type";
 import type { Location } from "./Location.type";
 
 export type LocationRepository = {
-  getLocation(coordinages: Coordinates): Location;
+  /**
+   * @description 좌표를 기반으로 주소 정보를 가져옵니다.
+   */
+  getLocation(coordinates: Coordinates): Promise<Location>;
 
   /**
-   * 장소를 검색하면 그 장소에 맞는 좌표가 반환됩니다.
+   * @description 키워드에 맞는 장소를 반환합니다.
+   * @param keyword 검색어
    */
-  searchCoordinates(keyword: string): Coordinates;
+  searchLocation(keyword: string): Promise<Location[]>;
 
   /**
-   * 해당 키워드에 맞는 장소를 반환합니다.
+   * @description 키워드에 맞는 행정구역 리스트를 반환합니다.
    */
-  searchLocation(keyword: string): Location[];
+  searchDistricts(keyword: string): Promise<District[]>;
 };

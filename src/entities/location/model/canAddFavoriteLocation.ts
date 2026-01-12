@@ -9,6 +9,9 @@ export const canAddFavoriteLocation = (
   return favoriteLocations.length < MAX_FAVORITES_COUNT;
 };
 
+/**
+ * TODO: canAddFavoriteLocation를 tanstackQuery의 repo를 넣어서 사용할 수 있을 지 확인
+ */
 export const canAddFavoriteLocation2 = (repo: FavoriteLocationRepository) => {
   const currentFavoritesCount = repo.getFavoriteLocations().length;
   return currentFavoritesCount < MAX_FAVORITES_COUNT;
