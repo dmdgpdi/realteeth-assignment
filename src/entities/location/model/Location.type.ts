@@ -7,7 +7,6 @@ import type { Coordinates } from "./Coordinates.type";
  */
 export interface Location {
   coordinates: Coordinates;
-  timezone: string; // Intl을 이용해서 생성한다.
   countryCode?: string;
   name?: string;
 }
