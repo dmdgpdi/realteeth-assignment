@@ -1,3 +1,4 @@
+import { isSameCoordinates } from "@/entities/location/@x/FavoriteLocation";
 import type { FavoriteLocation } from "../model/FavoriteLocation.type";
 import type { FavoriteLocationRepository } from "../model/FavoriteLocationRepository.interface";
 
@@ -28,16 +29,18 @@ export class FavoriteLocationRepositoryImpl
   }
 
   async renameFavoriteLocations({
-    favoriteId,
+    favoriteLocation,
     displayName,
   }: {
-    favoriteId: string;
+    favoriteLocation: FavoriteLocation;
     displayName: string;
   }) {
     const favoriteLocations = await this.getFavoriteLocations();
 
     const updatedFavoriteLocations = favoriteLocations.map((location) => {
-      if (location.id === favoriteId) {
+      if (
+        isSameCoordinates(location.coordinates, favoriteLocation.coordinates)
+      ) {
         return {
           ...location,
           displayName,
@@ -53,11 +56,11 @@ export class FavoriteLocationRepositoryImpl
     );
   }
 
-  async deleteFavoriteLocation(favoriteId: string) {
+  async deleteFavoriteLocation(favoriteLocation: FavoriteLocation) {
     const favoriteLocations = await this.getFavoriteLocations();
 
-    const updatedFavoriteLocations = favoriteLocations.filter(
-      (location) => location.id !== favoriteId,
+    const updatedFavoriteLocations = favoriteLocations.filter((location) =>
+      isSameCoordinates(location.coordinates, favoriteLocation.coordinates),
     );
 
     localStorage.setItem(
