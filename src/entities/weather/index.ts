@@ -1,3 +1,4 @@
+import { useGetTodayWeatherSeriesQuery } from "./api/useGetTodayWeatherSeriesQuery";
 import { useGetWeatherSeriesQuery } from "./api/useGetWeatherSeriesQuery";
 import { weatherKey } from "./api/weather.queryKey";
 import type { WeatherSeriesRepository } from "./model/WeatherSeriesRepository.interface";
@@ -8,4 +9,5 @@ export {
   WeatherSeriesRepositoryProvider,
   useGetWeatherSeriesQuery,
   weatherKey,
+  useGetTodayWeatherSeriesQuery,
 };

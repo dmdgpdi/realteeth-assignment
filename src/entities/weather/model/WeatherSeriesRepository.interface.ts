@@ -16,12 +16,14 @@ export interface WeatherSeriesRepository {
  * @description 리포지토리 조회 옵션입니다.
  */
 type WeatherSeriesRepositoryOptions = {
-  /** 타임 레인지를 어떤 시간 단위로 쪼개는지 (5분, 1시간, 1일 등) */
-  timeUnit: string;
+  /** 타임 레인지를 나눌 시간 간격(초 단위)입니다.
+   * @default 3600
+   */
+  timeUnit: number;
 };
 
 export interface GetWeatherSeriesParams {
   location: Location;
   timeRange: TimeRange;
-  options?: WeatherSeriesRepositoryOptions;
+  weatherOptions?: WeatherSeriesRepositoryOptions;
 }

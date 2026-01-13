@@ -39,10 +39,10 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
    *
    * @param location 날씨를 조회할 위치 (위경도 포함)
    * @param timeRange 조회할 시간 범위 (시작/종료) - 과거 시간 포함 시 해당 데이터는 누락됨
-   * @param _options 추가 옵션 (현재는 사용되지 않음)
+   * @param _options 추가 옵션 (시간을 언제 쪼갤지)
    * @returns 날씨 시리즈 데이터 (현재 온도, 최저/최고 온도, 시간대별 날씨 목록)
    */
-  getWeatherSeries: async ({ location, timeRange, options }) => {
+  getWeatherSeries: async ({ location, timeRange, weatherOptions }) => {
     const { lat, lon } = location.coordinates;
     const url = new URL(BASE_URL);
     url.searchParams.append("lat", lat.toString());
@@ -52,7 +52,6 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
     url.searchParams.append("exclude", "minutely,daily,alerts");
 
     const response = await fetch(url.toString());
-
     if (!response.ok) {
       throw new Error(
         `날씨 데이터를 가져오는데 실패했습니다: ${response.statusText}`,
@@ -66,17 +65,53 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
       unit: "C" as const,
     };
 
-    // 시간 범위(timeRange)에 따른 시간대별 데이터 필터링
+    // 시간 범위 필터링
     const startTimestamp = Math.floor(timeRange.start.getTime() / 1000);
     const endTimestamp = Math.floor(timeRange.end.getTime() / 1000);
 
+    // 현재 시간 기준으로 필터링 (과거 시간 제외)
+    const nowTimestamp = Math.floor(Date.now() / 1000);
+    const effectiveStart = Math.max(startTimestamp, nowTimestamp);
+
     const filteredHourly = data.hourly.filter(
-      (h) => h.dt >= startTimestamp && h.dt <= endTimestamp,
+      (h) => h.dt >= effectiveStart && h.dt <= endTimestamp,
     );
 
-    // 필터링된 데이터가 없는 경우, 최저/최고 온도를 위해 전체 시간대 데이터(또는 현재 데이터)를 사용
-    const temperatureDataSource = [data.current, ...filteredHourly];
+    // timeUnit 기반 재샘플링
+    const timeUnitSeconds = weatherOptions?.timeUnit ?? 3600; // 기본 1시간 단위
+    const resampledWeathers: Weather[] = [];
+
+    for (
+      let sliceTime = effectiveStart + timeUnitSeconds;
+      sliceTime <= endTimestamp;
+      sliceTime += timeUnitSeconds
+    ) {
+      // sliceTime과 가장 가까운 데이터 찾기
+      const closest = filteredHourly.reduce<null | (typeof filteredHourly)[0]>(
+        (prev, curr) => {
+          if (!prev) return curr;
+          return Math.abs(curr.dt - sliceTime) < Math.abs(prev.dt - sliceTime)
+            ? curr
+            : prev;
+        },
+        null,
+      );
+
+      if (closest) {
+        resampledWeathers.push({
+          temperature: { value: closest.temp, unit: "C" },
+          feels_like_temperature: { value: closest.feels_like, unit: "C" },
+        });
+      }
+    }
+
+    // 최저/최고 온도 계산 (현재 온도 포함)
+    const temperatureDataSource = [
+      data.current,
+      ...resampledWeathers.map((w) => ({ temp: w.temperature.value })),
+    ];
     const temperatures = temperatureDataSource.map((h) => h.temp);
+
     const minTemperature = {
       value: Math.min(...temperatures),
       unit: "C" as const,
@@ -86,22 +121,11 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
       unit: "C" as const,
     };
 
-    const weathers: Weather[] = filteredHourly.map((h) => ({
-      temperature: {
-        value: h.temp,
-        unit: "C" as const,
-      },
-      feels_like_temperature: {
-        value: h.feels_like,
-        unit: "C" as const,
-      },
-    }));
-
     return {
       currentTemperature,
       minTemperature,
       maxTemperature,
-      weathers,
+      weathers: resampledWeathers,
     };
   },
 };
