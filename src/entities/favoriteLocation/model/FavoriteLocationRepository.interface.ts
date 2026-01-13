@@ -9,12 +9,12 @@ export interface FavoriteLocationRepository {
 
   /** 이름을 수정합니다 */
   renameFavoriteLocations({
-    favoriteId,
+    favoriteLocation,
     displayName,
   }: {
-    favoriteId: string;
+    favoriteLocation: FavoriteLocation;
     displayName: string;
   }): Promise<void>;
 
-  deleteFavoriteLocation(favoriteId: string): Promise<void>;
+  deleteFavoriteLocation(favoriteLocation: FavoriteLocation): Promise<void>;
 }

@@ -5,6 +5,7 @@ import { useGetLocationQuery } from "./api/useGetLocationQuery";
 import { useSearchDistrictsQuery } from "./api/useSearchDistrictsQuery";
 import { useSearchLocationQuery } from "./api/useSearchLocationQuery";
 import type { District } from "./model/District.type";
+import { isSameCoordinates } from "./model/isSameCoordinates";
 import type { Location } from "./model/Location.type";
 import type { LocationRepository } from "./model/LocationRepository.interface";
 import { useLocationRepository } from "./model/LocationRepositoryProvider";
@@ -19,4 +20,5 @@ export {
   useGetLocationQuery,
   useSearchDistrictsQuery,
   useSearchLocationQuery,
+  isSameCoordinates,
 };
