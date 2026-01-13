@@ -1,39 +1,48 @@
-import { useMutation } from "@tanstack/react-query";
-import type { Location } from "@/entities/location/@x/FavoriteLocation";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { canAddFavoriteLocation } from "../model/canAddFavoriteLocation";
-import { createFavoriteLocation } from "../model/createFavoriteLocation";
+import type { FavoriteLocation } from "../model/FavoriteLocation.type";
 import { useFavoriteLocationRepository } from "../model/FavoriteLocationRepositoryProvider";
 import { favoriteLocationKey } from "./favoriteLocation.queryKey";
 
 export function useAddFavoriteLocation() {
+  const queryClient = useQueryClient();
   const repo = useFavoriteLocationRepository();
 
-  const addFavoriteLocation = async ({
-    location,
-    displayName,
-  }: {
-    location: Location;
-    displayName: string;
-  }) => {
+  const addFavoriteLocation = async (location: FavoriteLocation) => {
     const canAdd = await canAddFavoriteLocation(repo);
 
     if (!canAdd) {
       throw new Error("즐겨찾기는 최대 6개까지 추가할 수 있습니다.");
     }
 
-    const favoriteLocation = createFavoriteLocation({
-      location,
-      displayName,
-    });
-
-    await repo.addFavoriteLocation(favoriteLocation);
+    await repo.addFavoriteLocation(location);
   };
 
   return useMutation({
     mutationFn: addFavoriteLocation,
-    onMutate: () => {},
-    onSettled: (_data, _error, _params, _onMutateResult, { client }) => {
-      client.invalidateQueries({
+    onMutate: (variable) => {
+      const prevFavoriteLocations =
+        queryClient.getQueryData<FavoriteLocation[]>(
+          favoriteLocationKey.getFavoriteLocations(),
+        ) ?? [];
+
+      const newFavoriteLocations = [...prevFavoriteLocations, variable];
+
+      queryClient.setQueryData(
+        favoriteLocationKey.getFavoriteLocations(),
+        newFavoriteLocations,
+      );
+
+      return { prevFavoriteLocations };
+    },
+    onError: (_error, _variable, onMutateResult) => {
+      queryClient.setQueryData(
+        favoriteLocationKey.getFavoriteLocations(),
+        onMutateResult?.prevFavoriteLocations,
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
         queryKey: favoriteLocationKey.getFavoriteLocations(),
       });
     },

@@ -22,6 +22,6 @@ export function useSearchDistricts(keyword: string) {
     isLoading,
     isEmpty,
     isError,
-    emptyMessage: isEmpty ? "dasd" : null,
+    emptyMessage: EMPTY_MESSAGE,
   };
 }

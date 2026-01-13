@@ -59,8 +59,9 @@ export class FavoriteLocationRepositoryImpl
   async deleteFavoriteLocation(favoriteLocation: FavoriteLocation) {
     const favoriteLocations = await this.getFavoriteLocations();
 
-    const updatedFavoriteLocations = favoriteLocations.filter((location) =>
-      isSameCoordinates(location.coordinates, favoriteLocation.coordinates),
+    const updatedFavoriteLocations = favoriteLocations.filter(
+      (location) =>
+        !isSameCoordinates(location.coordinates, favoriteLocation.coordinates),
     );
 
     localStorage.setItem(

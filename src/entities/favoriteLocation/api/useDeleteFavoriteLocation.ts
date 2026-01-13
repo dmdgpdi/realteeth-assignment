@@ -1,31 +1,28 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFavoriteLocationRepository } from "../model/FavoriteLocationRepositoryProvider";
 import { favoriteLocationKey } from "./favoriteLocation.queryKey";
 
 export function useDeleteFavoriteLocation() {
   const { deleteFavoriteLocation } = useFavoriteLocationRepository();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: deleteFavoriteLocation,
-    onMutate: (_variable, { client }) => {
-      const prevFavoriteLocations = client.getQueryData(
+    onMutate: () => {
+      const prevFavoriteLocations = queryClient.getQueryData(
         favoriteLocationKey.getFavoriteLocations(),
       );
 
-      client.invalidateQueries({
-        queryKey: favoriteLocationKey.getFavoriteLocations(),
-      });
-
       return { prevFavoriteLocations };
     },
-    onError: (_error, _variable, onMutateResult, { client }) => {
-      client.setQueryData(
+    onError: (_error, _variable, onMutateResult) => {
+      queryClient.setQueryData(
         favoriteLocationKey.getFavoriteLocations(),
         onMutateResult?.prevFavoriteLocations,
       );
     },
-    onSettled: (_data, _error, _variable, _onMutateResult, { client }) => {
-      client.invalidateQueries({
+    onSettled: () => {
+      queryClient.invalidateQueries({
         queryKey: favoriteLocationKey.getFavoriteLocations(),
       });
     },
