@@ -11,7 +11,7 @@ export const createFavoriteLocation = ({
   displayName,
 }: CreateFavoriteLocationParams): FavoriteLocation => {
   return {
-    displayName: displayName,
+    displayName,
     coordinates: location.coordinates,
   };
 };
