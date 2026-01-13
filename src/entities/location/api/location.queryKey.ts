@@ -8,6 +8,5 @@ export const locationKey = {
     [...locationKey.all, "searchLocation", keyword] as const,
   searchDistricts: (keyword: string) =>
     [...locationKey.all, "searchDistricts", keyword] as const,
-  favoriteLocation: () => [...locationKey.all, "favoriteLocation"] as const,
   current: () => [...locationKey.all, "current"] as const,
 } as const;

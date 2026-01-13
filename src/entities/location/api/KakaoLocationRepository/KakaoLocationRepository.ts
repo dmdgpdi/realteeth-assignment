@@ -98,7 +98,7 @@ export class KakaoLocationRepository implements LocationRepository {
   }
 
   getCurrentLocation(): Promise<Location> {
-    if (!navigator.geolocation) {
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
       return Promise.reject(new Error("Geolocation is not available"));
     }
 
