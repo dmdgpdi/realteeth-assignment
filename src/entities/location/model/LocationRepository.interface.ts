@@ -18,4 +18,6 @@ export type LocationRepository = {
    * @description 키워드에 맞는 행정구역 리스트를 반환합니다.
    */
   searchDistricts(keyword: string): Promise<District[]>;
+
+  getCurrentLocation(): Promise<Location>;
 };

@@ -2,7 +2,7 @@ import { ENV } from "@/shared/constants/env";
 import { districtSearchService } from "../../lib/DistrictSearch";
 import type { Coordinates } from "../../model/Coordinates.type";
 import type { District } from "../../model/District.type";
-import type { Location as DomainLocation } from "../../model/Location.type";
+import type { Location } from "../../model/Location.type";
 import type { LocationRepository } from "../../model/LocationRepository.interface";
 import type { KakaoAddressSearchResponse } from "./dto/KakaoAddressSearchResponse.dto";
 import type { KakaoCoordToAddressResponse } from "./dto/KakaoCoordToAddressResponse.dto";
@@ -24,7 +24,7 @@ export class KakaoLocationRepository implements LocationRepository {
   /**
    * @description 좌표를 기반으로 상세 주소 정보를 가져옵니다.
    */
-  async getLocation(coordinates: Coordinates): Promise<DomainLocation> {
+  async getLocation(coordinates: Coordinates): Promise<Location> {
     const response = await fetch(KAKAO_API_URL.COORD_TO_ADDRESS(coordinates), {
       headers: {
         Authorization: `KakaoAK ${ENV.KAKAO_REST_API_KEY}`,
@@ -56,7 +56,7 @@ export class KakaoLocationRepository implements LocationRepository {
   /**
    * @description 주소 키워드에 맞는 장소 리스트를 반환합니다.
    */
-  async searchLocation(keyword: string): Promise<DomainLocation[]> {
+  async searchLocation(keyword: string): Promise<Location[]> {
     if (!keyword.trim()) {
       return [];
     }
@@ -95,5 +95,30 @@ export class KakaoLocationRepository implements LocationRepository {
    */
   async searchDistricts(keyword: string): Promise<District[]> {
     return districtSearchService.search(keyword);
+  }
+
+  getCurrentLocation(): Promise<Location> {
+    if (!navigator.geolocation) {
+      return Promise.reject(new Error("Geolocation is not available"));
+    }
+
+    const { promise, resolve, reject } = Promise.withResolvers<Location>();
+
+    const onSuccess = (position: GeolocationPosition) => {
+      resolve({
+        coordinates: {
+          lat: position.coords.latitude,
+          lon: position.coords.longitude,
+        },
+      });
+    };
+
+    const onFail = () => {
+      reject(new Error("Geolocation is not available"));
+    };
+
+    navigator.geolocation.getCurrentPosition(onSuccess, onFail);
+
+    return promise;
   }
 }
