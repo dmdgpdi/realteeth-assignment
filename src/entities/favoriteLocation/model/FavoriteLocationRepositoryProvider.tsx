@@ -1,5 +1,5 @@
 import { createContext, type PropsWithChildren, useContext } from "react";
-import type { FavoriteLocationRepository } from "@/entities/location";
+import type { FavoriteLocationRepository } from "./FavoriteLocationRepository.interface";
 
 const FavoriteLocationRepositoryContext =
   createContext<FavoriteLocationRepository | null>(null);

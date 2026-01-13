@@ -1,20 +1,15 @@
-import type { Location } from "@/entities/location/@x/Weather";
 import { ENV } from "@/shared/constants/env";
-import type { TimeRange } from "../model/TimeRange.type";
 import type { Weather } from "../model/Weather.type";
-import type { WeatherSeries } from "../model/WeatherSeries.type";
 import type { WeatherSeriesRepository } from "../model/WeatherSeriesRepository.interface";
 import type { OpenWeatherOneCallResponse } from "./dto/OpenWeatherOneCallResponse.dto";
+
+const API_KEY = ENV.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+const BASE_URL = "https://api.openweathermap.org/data/3.0/onecall";
 
 /**
  * @description OpenWeatherMap API를 사용하여 날씨 정보를 가져오는 리포지토리 구현체입니다.
  */
-export class WeatherSeriesRepositoryImplement
-  implements WeatherSeriesRepository
-{
-  private readonly apiKey = ENV.NEXT_PUBLIC_OPENWEATHER_API_KEY;
-  private readonly baseUrl = "https://api.openweathermap.org/data/3.0/onecall";
-
+export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
   /**
    * @description 특정 위치와 시간 범위에 대한 날씨 시리즈를 가져옵니다.
    *
@@ -47,16 +42,12 @@ export class WeatherSeriesRepositoryImplement
    * @param _options 추가 옵션 (현재는 사용되지 않음)
    * @returns 날씨 시리즈 데이터 (현재 온도, 최저/최고 온도, 시간대별 날씨 목록)
    */
-  async getWeatherSeries(
-    location: Location,
-    timeRange: TimeRange,
-    _options?: { timeUnit: string },
-  ): Promise<WeatherSeries> {
+  getWeatherSeries: async ({ location, timeRange, options }) => {
     const { lat, lon } = location.coordinates;
-    const url = new URL(this.baseUrl);
+    const url = new URL(BASE_URL);
     url.searchParams.append("lat", lat.toString());
     url.searchParams.append("lon", lon.toString());
-    url.searchParams.append("appid", this.apiKey || "");
+    url.searchParams.append("appid", API_KEY || "");
     url.searchParams.append("units", "metric");
     url.searchParams.append("exclude", "minutely,daily,alerts");
 
@@ -112,5 +103,5 @@ export class WeatherSeriesRepositoryImplement
       maxTemperature,
       weathers,
     };
-  }
-}
+  },
+};
