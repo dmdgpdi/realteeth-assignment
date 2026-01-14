@@ -1,18 +1,18 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
+import Link from "next/link";
+import { useGetCurrentLocationQuery } from "@/entities/location";
 import { formatTemperature, WeatherIcon } from "@/entities/weather";
+import { ROUTES } from "@/shared/constants/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useGetCurrentLocationWeather } from "../useGetCurrentLocationWeather.model";
 
 export function CurrentLocationWeatherCard() {
-  const {
-    data: currentLocationWeather,
-    isLoading,
-    isError,
-    isSuccess,
-  } = useGetCurrentLocationWeather();
+  const { data: currentLocation } = useGetCurrentLocationQuery();
+  const { data: currentLocationWeather, isError } =
+    useGetCurrentLocationWeather();
 
   if (isError) {
     return (
@@ -22,19 +22,10 @@ export function CurrentLocationWeatherCard() {
     );
   }
 
-  if (isLoading || !isSuccess) {
+  if (!currentLocation || !currentLocationWeather) {
     return (
       <div className="space-y-4 w-full  max-w-md mx-auto px-4">
         <Skeleton className="h-44 w-full rounded-xl" />
-        <Skeleton className="h-32 w-full rounded-xl" />
-      </div>
-    );
-  }
-
-  if (!currentLocationWeather) {
-    return (
-      <div className="text-center py-20 text-muted-foreground">
-        위치 정보를 가져오는 중...
       </div>
     );
   }
@@ -52,11 +43,21 @@ export function CurrentLocationWeatherCard() {
   const maxTemp = formatTemperature(maxTemperature);
   const feelTemp = formatTemperature(feelsLikeTemperature);
 
+  const moveDetailPage = () => {
+    return ROUTES.DETAIL({
+      lat: currentLocation.coordinates.lat,
+      lon: currentLocation.coordinates.lon,
+      name: currentLocation.name,
+    });
+  };
+
   return (
     <div className="space-y-4 w-xs md:w-md max-w-md mx-auto">
       <Card className="py-3 md:py-4 gap-2 md:gap-6">
         <CardHeader>
-          <CardTitle className="text-md font-medium">현재 날씨</CardTitle>
+          <Link href={moveDetailPage()}>
+            <CardTitle className="text-md font-medium">현재 위치</CardTitle>
+          </Link>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4  justify-start">

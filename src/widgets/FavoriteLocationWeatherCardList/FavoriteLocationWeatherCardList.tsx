@@ -8,7 +8,9 @@ export function FavoriteLocationWeatherCardList() {
 
   return (
     <div className="mx-auto w-xs md:w-md max-w-md space-y-4">
-      <h2 className=" text-2xl font-bold tracking-tight">나의 즐겨찾기</h2>
+      {favoriteLocations.length > 0 && (
+        <h2 className=" text-2xl font-bold tracking-tight">나의 즐겨찾기</h2>
+      )}
       {favoriteLocations.map((favoriteLocation) => (
         <FavoriteLocationWeatherCard
           key={`${favoriteLocation.coordinates.lat}
