@@ -9,6 +9,7 @@ import { isSameCoordinates } from "./model/isSameCoordinates";
 import type { Location } from "./model/Location.type";
 import type { LocationRepository } from "./model/LocationRepository.interface";
 import { useLocationRepository } from "./model/LocationRepositoryProvider";
+import { LocationBadge } from "./ui/LocationBadge";
 
 export type { LocationRepository, District, Location };
 
@@ -21,4 +22,5 @@ export {
   useSearchDistrictsQuery,
   useSearchLocationQuery,
   isSameCoordinates,
+  LocationBadge,
 };

@@ -1,13 +1,11 @@
 import { useGetTodayWeatherSeriesQuery } from "./api/useGetTodayWeatherSeriesQuery";
-import { useGetWeatherSeriesQuery } from "./api/useGetWeatherSeriesQuery";
 import { weatherKey } from "./api/weather.queryKey";
-import type { WeatherSeriesRepository } from "./model/WeatherSeriesRepository.interface";
-import { WeatherSeriesRepositoryProvider } from "./model/WeatherSeriesRepositoryProvider";
+import { DailyWeatherSeriesRepositoryProvider } from "./model/DailyWeatherSeriesProvider";
+import type { DailyWeatherSeriesRepository } from "./model/DailyWeatherSeriesRepository.interface";
 
-export type { WeatherSeriesRepository };
+export type { DailyWeatherSeriesRepository };
 export {
-  WeatherSeriesRepositoryProvider,
-  useGetWeatherSeriesQuery,
-  weatherKey,
+  DailyWeatherSeriesRepositoryProvider,
   useGetTodayWeatherSeriesQuery,
+  weatherKey,
 };

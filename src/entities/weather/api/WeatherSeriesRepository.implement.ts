@@ -1,7 +1,11 @@
 import { ENV } from "@/shared/constants/env";
+import type { DailyWeatherSeriesRepository } from "../model/DailyWeatherSeriesRepository.interface";
+import type { MainWeather } from "../model/MainWeather.type";
 import type { Weather } from "../model/Weather.type";
-import type { WeatherSeriesRepository } from "../model/WeatherSeriesRepository.interface";
-import type { OpenWeatherOneCallResponse } from "./dto/OpenWeatherOneCallResponse.dto";
+import type {
+  MainWeatherDTO,
+  OpenWeatherOneCallResponse,
+} from "./dto/OpenWeatherOneCallResponse.dto";
 
 const API_KEY = ENV.NEXT_PUBLIC_OPENWEATHER_API_KEY;
 const BASE_URL = "https://api.openweathermap.org/data/3.0/onecall";
@@ -9,7 +13,7 @@ const BASE_URL = "https://api.openweathermap.org/data/3.0/onecall";
 /**
  * @description OpenWeatherMap API를 사용하여 날씨 정보를 가져오는 리포지토리 구현체입니다.
  */
-export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
+export const WeatherSeriesRepositoryImplement: DailyWeatherSeriesRepository = {
   /**
    * @description 특정 위치와 시간 범위에 대한 날씨 시리즈를 가져옵니다.
    *
@@ -42,7 +46,7 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
    * @param _options 추가 옵션 (시간을 언제 쪼갤지)
    * @returns 날씨 시리즈 데이터 (현재 온도, 최저/최고 온도, 시간대별 날씨 목록)
    */
-  getWeatherSeries: async ({ location, timeRange, weatherOptions }) => {
+  getDailyWeatherSeries: async ({ location, weatherOptions }) => {
     const { lat, lon } = location.coordinates;
     const url = new URL(BASE_URL);
     url.searchParams.append("lat", lat.toString());
@@ -66,15 +70,17 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
     };
 
     // 시간 범위 필터링
-    const startTimestamp = Math.floor(timeRange.start.getTime() / 1000);
-    const endTimestamp = Math.floor(timeRange.end.getTime() / 1000);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    // 현재 시간 기준으로 필터링 (과거 시간 제외)
-    const nowTimestamp = Math.floor(Date.now() / 1000);
-    const effectiveStart = Math.max(startTimestamp, nowTimestamp);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const startTimestamp = Math.floor(today.getTime() / 1000);
+    const endTimestamp = Math.floor(tomorrow.getTime() / 1000);
 
     const filteredHourly = data.hourly.filter(
-      (h) => h.dt >= effectiveStart && h.dt <= endTimestamp,
+      (h) => h.dt >= startTimestamp && h.dt <= endTimestamp,
     );
 
     // timeUnit 기반 재샘플링
@@ -82,7 +88,7 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
     const resampledWeathers: Weather[] = [];
 
     for (
-      let sliceTime = effectiveStart + timeUnitSeconds;
+      let sliceTime = startTimestamp + timeUnitSeconds;
       sliceTime <= endTimestamp;
       sliceTime += timeUnitSeconds
     ) {
@@ -101,6 +107,7 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
         resampledWeathers.push({
           temperature: { value: closest.temp, unit: "C" },
           feels_like_temperature: { value: closest.feels_like, unit: "C" },
+          mainWeather: mapMainWeather(closest.weather[0].main),
         });
       }
     }
@@ -126,6 +133,28 @@ export const WeatherSeriesRepositoryImplement: WeatherSeriesRepository = {
       minTemperature,
       maxTemperature,
       weathers: resampledWeathers,
+      mainWeather: mapMainWeather(data.daily[0].weather[0].main),
+      feelsLikeTemperature: { value: data.daily[0].feels_like.day, unit: "C" },
+      rainProbability: data.daily[0].pop,
     };
   },
+};
+
+/**
+ * @description MainWeatherDTO → 도메인 MainWeather로 변환
+ * @param dto OpenWeather에서 받은 날씨 그룹
+ * @returns 도메인에서 사용하는 MainWeather
+ */
+const mapMainWeather = (dto: MainWeatherDTO): MainWeather => {
+  switch (dto) {
+    case "Clear":
+    case "Clouds":
+    case "Rain":
+    case "Snow":
+    case "Thunderstorm":
+    case "Drizzle":
+      return dto; // 도메인에 있는 값 그대로 반환
+    default:
+      return "Clear"; // 도메인에 없는 값은 기본값
+  }
 };
