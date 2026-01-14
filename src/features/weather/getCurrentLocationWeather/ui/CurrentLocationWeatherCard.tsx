@@ -120,6 +120,7 @@ export function CurrentLocationWeatherCard() {
             <span className="text-sm">시간대별 기온</span>
             <div className="flex gap-4 overflow-x-auto scrollbar-none py-2">
               {weathers.map((weather, idx) => {
+                console.log("weather", weather);
                 const hourTemp = formatTemperature(weather.temperature);
                 const text = `${hourTemp.isNegative ? "-" : ""}${hourTemp.value}${hourTemp.unit}`;
 
@@ -130,7 +131,7 @@ export function CurrentLocationWeatherCard() {
                     className="flex flex-col items-center min-w-12 text-center"
                   >
                     <span className="text-xs text-muted-foreground">
-                      {`${idx}시`}
+                      {`${new Date(weather.dt * 1000).getHours()}시`}
                     </span>
                     <span className="font-semibold">{text}</span>
                   </div>
@@ -141,30 +142,5 @@ export function CurrentLocationWeatherCard() {
         </CardContent>
       </Card>
     </div>
-  );
-}
-
-interface HourlyForecastProps {
-  weatherSeries: DailyWeatherSeries;
-  className?: string;
-}
-
-export function HourlyForecast({
-  weatherSeries,
-  className,
-}: HourlyForecastProps) {
-  const { weathers } = weatherSeries;
-
-  return (
-    <Card className={`p-4 sm:p-6 ${className}`}>
-      <CardHeader className="flex items-center justify-between pb-2">
-        <CardTitle className="text-sm text-muted-foreground font-medium">
-          시간대별 기온
-        </CardTitle>
-        <Clock className="h-5 w-5 text-muted-foreground" />
-      </CardHeader>
-
-      <CardContent></CardContent>
-    </Card>
   );
 }

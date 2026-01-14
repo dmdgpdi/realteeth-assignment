@@ -1536,8 +1536,11 @@ export const WeatherSeriesRepositoryMock: DailyWeatherSeriesRepository = {
     const timeUnitSeconds = weatherOptions?.timeUnit ?? 3600; // 기본 1시간 단위
     const resampledWeathers: Weather[] = [];
 
+    const firstHourlyDt = data.hourly[0]?.dt ?? startTimestamp;
+    const sliceStart = Math.max(startTimestamp, firstHourlyDt);
+
     for (
-      let sliceTime = startTimestamp + timeUnitSeconds;
+      let sliceTime = sliceStart + timeUnitSeconds;
       sliceTime <= endTimestamp;
       sliceTime += timeUnitSeconds
     ) {
@@ -1554,6 +1557,7 @@ export const WeatherSeriesRepositoryMock: DailyWeatherSeriesRepository = {
 
       if (closest) {
         resampledWeathers.push({
+          dt: closest.dt,
           temperature: { value: closest.temp, unit: "C" },
           feels_like_temperature: { value: closest.feels_like, unit: "C" },
           mainWeather: mapMainWeather(closest.weather[0].main),
