@@ -13,8 +13,7 @@ export function FavoriteLocationWeatherCardList() {
       )}
       {favoriteLocations.map((favoriteLocation) => (
         <FavoriteLocationWeatherCard
-          key={`${favoriteLocation.coordinates.lat}
-            ${favoriteLocation.coordinates.lon}`}
+          key={`${favoriteLocation.coordinates.lat}-${favoriteLocation.coordinates.lon}`}
           location={favoriteLocation}
         />
       ))}
