@@ -1,5 +1,5 @@
 import { MapPin } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/libs/utils";
 import type { Location } from "../model/Location.type";
 
 interface LocationBadgeProps {

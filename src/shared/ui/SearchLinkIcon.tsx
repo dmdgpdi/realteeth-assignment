@@ -4,10 +4,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { ROUTES } from "@/shared/constants/route";
 
 export function SearchLinkIcon() {
   const pathname = usePathname();
-  const isSearchPage = pathname === "/search";
+  const isSearchPage = pathname === ROUTES.SEARCH;
   const router = useRouter();
 
   return (
@@ -28,7 +29,7 @@ export function SearchLinkIcon() {
             {...animationProps}
             className="absolute inset-0 text-gray-600 hover:text-gray-900"
           >
-            <Link href="/search">
+            <Link href={ROUTES.SEARCH}>
               <Search size={24} />
             </Link>
           </motion.div>

@@ -11,7 +11,10 @@ export function useAddFavoriteLocation() {
   const { data: favoriteLocations = [] } = useGetFavoriteLocations();
 
   const addFavoriteLocation = async (location: FavoriteLocation) => {
+    console.log("addFavoriteLocation start");
     const canAdd = canAddFavoriteLocation(favoriteLocations.length);
+
+    console.log("canAdd", canAdd);
 
     if (!canAdd) {
       throw new Error("즐겨찾기는 최대 6개까지 추가할 수 있습니다.");

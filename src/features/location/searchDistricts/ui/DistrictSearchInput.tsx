@@ -3,7 +3,7 @@
 import { Loader2, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { type Location, useSearchLocationQuery } from "@/entities/location";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/shared/libs/utils";
 import { Input } from "@/shared/ui/input";
 
 interface DistrictSearchInputProps {
