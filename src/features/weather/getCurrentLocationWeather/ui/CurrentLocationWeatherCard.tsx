@@ -1,9 +1,7 @@
 "use client";
 
-import { ArrowDown, ArrowUp, Clock, Thermometer } from "lucide-react";
-import { WeatherIcon } from "@/entities/weather";
-import type { DailyWeatherSeries } from "@/entities/weather/model/DailyWeatherSeries.type";
-import { formatTemperature } from "@/shared/lib/formatTemperature";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { formatTemperature, WeatherIcon } from "@/entities/weather";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useGetCurrentLocationWeather } from "../useGetCurrentLocationWeather.model";

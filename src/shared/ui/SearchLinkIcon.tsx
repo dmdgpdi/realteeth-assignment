@@ -10,13 +10,6 @@ export function SearchLinkIcon() {
   const isSearchPage = pathname === "/search";
   const router = useRouter();
 
-  const animationProps = {
-    initial: { scale: 0.8, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-    exit: { scale: 0.8, opacity: 0 },
-    transition: { duration: 0.2 },
-  };
-
   return (
     <div className="relative w-6 h-6">
       <AnimatePresence mode="wait">
@@ -44,3 +37,10 @@ export function SearchLinkIcon() {
     </div>
   );
 }
+
+const animationProps = {
+  initial: { scale: 0.8, opacity: 0 },
+  animate: { scale: 1, opacity: 1 },
+  exit: { scale: 0.8, opacity: 0 },
+  transition: { duration: 0.2 },
+};

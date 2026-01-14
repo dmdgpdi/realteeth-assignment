@@ -1,9 +1,11 @@
+import { useDebounce } from "@uidotdev/usehooks";
 import { useSearchDistrictsQuery } from "@/entities/location";
 
 const EMPTY_MESSAGE = "해당 장소의 정보가 제공되지 않습니다.";
 
 export function useSearchDistricts(keyword: string) {
-  const normalizedKeyword = keyword.trim();
+  const debouncedKeyword = useDebounce(keyword, 300);
+  const normalizedKeyword = debouncedKeyword.trim();
   const isValidKeyword = normalizedKeyword.length > 0;
 
   const {
