@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
 import { RootProvider } from "@/app/RootProvider";
+import { ROUTES } from "@/shared/constants/route";
 import { QueryClientProvider } from "@/shared/libs/@tanstack-query/QueryClientProvider";
 import { SearchLinkIcon } from "@/shared/ui/SearchLinkIcon";
 import { Toaster } from "@/shared/ui/sonner";
@@ -25,7 +26,7 @@ export default function RootLayout({
           <RootProvider>
             <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
               <div className="container flex h-14 items-center max-w-4xl mx-auto px-8 justify-between">
-                <Link href="/">
+                <Link href={ROUTES.HOME}>
                   <h1 className="text-xl font-bold tracking-tight">🌤️ 날씨</h1>
                 </Link>
                 <SearchLinkIcon />
