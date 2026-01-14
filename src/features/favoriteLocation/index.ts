@@ -1,7 +1,5 @@
 import { useRenameFavoriteLocation } from "./renameFavoriteLocation/useRenameFavoriteLocation.model";
+import { ToggleFavoriteLocationIconButton } from "./toggleFavoriteLocation/ui/ToggleFavoriteLocationIconButton";
 
-export { useRenameFavoriteLocation };
-
+export { useRenameFavoriteLocation, ToggleFavoriteLocationIconButton };
 export { useToggleFavoriteLocation } from "./toggleFavoriteLocation/useToggleFavoriteLocation.model";
-export { FavoriteToggle } from "./ui/FavoriteToggle";
-export { RenameFavoriteDialog } from "./ui/RenameFavoriteDialog";

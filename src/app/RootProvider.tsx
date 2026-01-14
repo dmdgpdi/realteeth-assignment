@@ -11,7 +11,7 @@ import { DailyWeatherSeriesRepositoryProvider } from "@/entities/weather/model/D
 
 const locationRepo = new KakaoLocationRepository();
 const weatherRepo = WeatherSeriesRepositoryImplement;
-const favoriteRepo = new FavoriteLocationRepositoryImpl();
+const favoriteRepo = FavoriteLocationRepositoryImpl;
 const weatherRepsMock = WeatherSeriesRepositoryMock;
 
 export function RootProvider({ children }: PropsWithChildren) {
