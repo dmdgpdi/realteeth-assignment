@@ -1,12 +1,32 @@
 import type { Temperature } from "@/entities/weather/model/Temperature.type";
 
+export interface FormattedTemperature {
+  value: string;
+  unit: string;
+  isNegative: boolean;
+}
+
 /**
- * @description 온도를 사람이 읽기 좋은 포맷으로 변환합니다.
+ * @description 온도를 UI용으로 포맷해서 숫자, 단위, 음수 여부를 분리해서 반환합니다.
  */
-export function formatTemperature(temperature?: Temperature): string {
-  if (!temperature || temperature.value === undefined) return "--°";
+export function formatTemperature(
+  temperature: Temperature,
+): FormattedTemperature {
+  if (!temperature || temperature.value === undefined) {
+    return {
+      value: "--",
+      unit: "°",
+      isNegative: false,
+    };
+  }
 
   const unitSuffix =
     temperature.unit === "C" ? "°" : temperature.unit === "F" ? "°F" : "K";
-  return `${Math.round(temperature.value)}${unitSuffix}`;
+  const isNegative = Math.round(temperature.value) < 0;
+
+  return {
+    value: Math.abs(Math.round(temperature.value)).toString(),
+    unit: unitSuffix,
+    isNegative,
+  };
 }

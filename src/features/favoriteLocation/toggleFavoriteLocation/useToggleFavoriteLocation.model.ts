@@ -6,39 +6,34 @@ import {
 import type { FavoriteLocation } from "@/entities/favoriteLocation/model/FavoriteLocation.type";
 import { isSameCoordinates, type Location } from "@/entities/location";
 
-interface UseToggleFavoriteLocationParams {
-  location: Location;
-  displayName: string;
-}
-
-export function useToggleFavoriteLocation({
-  location,
-  displayName,
-}: UseToggleFavoriteLocationParams) {
+export function useToggleFavoriteLocation(location: Location) {
   const { data: favoriteLocations = [] } = useGetFavoriteLocations();
-  const targetLocation: FavoriteLocation = {
-    ...location,
-    displayName,
-  };
+
   const { mutate: addFavoriteLocation } = useAddFavoriteLocation();
   const { mutate: deleteFavoriteLocation } = useDeleteFavoriteLocation();
 
-  const isFavorited = isLocationFavorited(targetLocation, favoriteLocations);
+  const isFavorited = favoriteLocations.some((favorite) =>
+    isSameCoordinates(location.coordinates, favorite.coordinates),
+  );
+
+  const canAddMore = favoriteLocations.length < 6;
 
   const toggle = () => {
     if (isFavorited) {
-      deleteFavoriteLocation(targetLocation);
+      const target = favoriteLocations.find((f) =>
+        isSameCoordinates(location.coordinates, f.coordinates),
+      );
+      if (target) deleteFavoriteLocation(target as FavoriteLocation);
       return;
     }
 
-    addFavoriteLocation(targetLocation);
+    if (canAddMore) {
+      addFavoriteLocation({
+        ...location,
+        displayName: location.name || "Unknown",
+      } as FavoriteLocation);
+    }
   };
 
-  return { isFavorited, toggle };
+  return { isFavorited, toggle, canAddMore };
 }
-
-const isLocationFavorited = (location: Location, favorites: Location[]) => {
-  return favorites.some((favorite) =>
-    isSameCoordinates(location.coordinates, favorite.coordinates),
-  );
-};
