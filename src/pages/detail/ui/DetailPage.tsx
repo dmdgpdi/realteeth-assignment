@@ -10,7 +10,7 @@ import {
 } from "@/entities/weather";
 import { ToggleFavoriteLocationIconButton } from "@/features/favoriteLocation";
 import { Button } from "@/shared/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Card, CardContent } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 
 export function DetailPage() {
