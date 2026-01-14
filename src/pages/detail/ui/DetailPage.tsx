@@ -2,11 +2,13 @@
 
 import { ArrowDown, ArrowLeft, ArrowUp } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import type { Location } from "@/entities/location";
 import {
   formatTemperature,
   useGetTodayWeatherSeriesQuery,
   WeatherIcon,
 } from "@/entities/weather";
+import { ToggleFavoriteLocationIconButton } from "@/features/favoriteLocation";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
@@ -18,15 +20,12 @@ export function DetailPage() {
   const lon = parseFloat(searchParams?.get("lon") || "0");
   const name = searchParams?.get("name") || "상세 날씨";
 
-  const location = {
+  const location: Location = {
     coordinates: { lat, lon },
+    name,
   };
 
-  const {
-    data: weatherSeries,
-    isLoading,
-    isError,
-  } = useGetTodayWeatherSeriesQuery({
+  const { data: weatherSeries, isError } = useGetTodayWeatherSeriesQuery({
     location,
   });
 
@@ -38,11 +37,10 @@ export function DetailPage() {
     );
   }
 
-  if (isLoading || !weatherSeries) {
+  if (!weatherSeries) {
     return (
       <div className="space-y-4 w-full max-w-md mx-auto px-4 mt-8">
         <Skeleton className="h-10 w-32 rounded-xl mb-4" />
-        <Skeleton className="h-64 w-full rounded-xl" />
       </div>
     );
   }
@@ -64,30 +62,32 @@ export function DetailPage() {
 
   return (
     <main className="container max-w-md mx-auto px-4 py-8">
-      <div className="flex items-center gap-2 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => router.back()}>
-          <ArrowLeft className="h-6 w-6" />
-        </Button>
-        <h1 className="text-2xl font-bold">{name}</h1>
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="icon" onClick={() => router.back()}>
+            <ArrowLeft className="h-6 w-6" />
+          </Button>
+          <h1 className="text-2xl font-bold">{name}</h1>
+        </div>
+        <ToggleFavoriteLocationIconButton location={location} />
       </div>
 
       <Card className="py-4 gap-6">
-        <CardHeader>
-          <CardTitle className="text-md font-medium">현재 날씨</CardTitle>
-        </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-4 justify-start">
+          <div className="flex items-center gap-4  justify-start">
             <div className="flex items-center gap-2">
-              <WeatherIcon weather={mainWeather} className="w-16 h-16" />
-              <div className="text-5xl font-bold">
-                {curTemp.isNegative && <span>-</span>}
+              <WeatherIcon weather={mainWeather} className="w-12 h-12" />
+              <div className="relative text-4xl font-bold">
+                {curTemp.isNegative && (
+                  <span className="absolute inset-y-0 -left-4">-</span>
+                )}
                 {`${curTemp.value}${curTemp.unit}`}
               </div>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex gap-1">
               <div className="flex items-center text-sm text-blue-500 font-medium">
                 <ArrowDown className="mr-1 h-4 w-4" />
-                <span className="whitespace-nowrap">
+                <span className="relative whitespace-nowrap">
                   최저 {minTemp.isNegative ? "-" : ""}
                   {minTemp.value}
                   {minTemp.unit}
@@ -95,7 +95,7 @@ export function DetailPage() {
               </div>
               <div className="flex items-center text-sm text-red-500 font-medium">
                 <ArrowUp className="mr-1 h-4 w-4" />
-                <span className="whitespace-nowrap">
+                <span className="relative whitespace-nowrap">
                   최고 {maxTemp.isNegative ? "-" : ""}
                   {maxTemp.value}
                   {maxTemp.unit}

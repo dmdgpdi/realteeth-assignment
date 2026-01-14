@@ -1,6 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp } from "lucide-react";
+import Link from "next/link";
 import type { FavoriteLocation } from "@/entities/favoriteLocation";
 import {
   formatTemperature,
@@ -11,6 +12,7 @@ import {
   RenameFavoriteLocationDialogButton,
   ToggleFavoriteLocationIconButton,
 } from "@/features/favoriteLocation";
+import { ROUTES } from "@/shared/constants/route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Skeleton } from "@/shared/ui/skeleton";
 
@@ -36,7 +38,6 @@ export function FavoriteLocationWeatherCard({
     return (
       <div className="space-y-4 w-full  max-w-md mx-auto px-4">
         <Skeleton className="h-44 w-full rounded-xl" />
-        <Skeleton className="h-32 w-full rounded-xl" />
       </div>
     );
   }
@@ -53,7 +54,16 @@ export function FavoriteLocationWeatherCard({
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-md font-medium">
-              {location.displayName}
+              <Link
+                href={ROUTES.DETAIL({
+                  lat: location.coordinates.lat,
+                  lon: location.coordinates.lon,
+                  name: location.displayName,
+                })}
+                className="cursor-pointer"
+              >
+                {location.displayName}
+              </Link>
               <RenameFavoriteLocationDialogButton favoriteLocation={location} />
             </CardTitle>
             <ToggleFavoriteLocationIconButton location={location} />
