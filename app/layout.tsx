@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Search } from "lucide-react";
-import Link from "next/link";
 import { RootProvider } from "@/app/RootProvider";
 import { QueryClientProvider } from "@/shared/libs/@tanstack-query/QueryClientProvider";
 import { SearchLinkIcon } from "@/shared/ui/SearchLinkIcon";

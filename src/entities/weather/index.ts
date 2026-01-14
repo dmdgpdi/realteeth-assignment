@@ -1,5 +1,6 @@
 import { useGetTodayWeatherSeriesQuery } from "./api/useGetTodayWeatherSeriesQuery";
 import { weatherKey } from "./api/weather.queryKey";
+import { formatTemperature } from "./libs/formatTemperature";
 import { DailyWeatherSeriesRepositoryProvider } from "./model/DailyWeatherSeriesProvider";
 import type { DailyWeatherSeriesRepository } from "./model/DailyWeatherSeriesRepository.interface";
 import { WeatherIcon } from "./ui/WeatherIcon";
@@ -10,4 +11,5 @@ export {
   useGetTodayWeatherSeriesQuery,
   weatherKey,
   WeatherIcon,
+  formatTemperature,
 };
