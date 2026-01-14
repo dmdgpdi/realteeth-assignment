@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RootProvider } from "@/app/RootProvider";
 import { QueryClientProvider } from "@/shared/libs/@tanstack-query/QueryClientProvider";
 import { SearchLinkIcon } from "@/shared/ui/SearchLinkIcon";
+import { Toaster } from "@/shared/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,6 +34,7 @@ export default function RootLayout({
             <div className="min-h-screen bg-background text-foreground pb-20">
               {children}
             </div>
+            <Toaster />
           </RootProvider>
         </QueryClientProvider>
       </body>

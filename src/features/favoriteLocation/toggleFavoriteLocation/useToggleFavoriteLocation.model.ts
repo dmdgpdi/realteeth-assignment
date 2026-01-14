@@ -1,10 +1,10 @@
+import { toast } from "sonner";
 import {
   useAddFavoriteLocation,
   useDeleteFavoriteLocation,
   useGetFavoriteLocations,
 } from "@/entities/favoriteLocation";
 import { canAddFavoriteLocation } from "@/entities/favoriteLocation/model/canAddFavoriteLocation";
-import type { FavoriteLocation } from "@/entities/favoriteLocation/model/FavoriteLocation.type";
 import { isSameCoordinates, type Location } from "@/entities/location";
 
 export function useToggleFavoriteLocation(location: Location) {
@@ -31,12 +31,23 @@ export function useToggleFavoriteLocation(location: Location) {
       return;
     }
 
-    if (canAddMore) {
-      addFavoriteLocation({
+    if (!canAddMore) {
+      toast.warning("즐겨찾기는 최대 6개까지 추가할 수 있습니다.");
+      return;
+    }
+
+    addFavoriteLocation(
+      {
         ...location,
         displayName: location.name || "Unknown",
-      } as FavoriteLocation);
-    }
+      },
+      {
+        onError: (error) => {
+          console.error("error", error);
+          toast.warning(error.message);
+        },
+      },
+    );
   };
 
   return { isFavorited, toggle, canAddMore };
