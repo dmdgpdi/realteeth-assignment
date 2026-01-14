@@ -1,7 +1,7 @@
-import type { GetWeatherSeriesParams } from "../model/WeatherSeriesRepository.interface";
+import type { GetDailyWeatherSeriesParams } from "../model/DailyWeatherSeriesRepository.interface";
 
 export const weatherKey = {
   all: ["weather"] as const,
-  weatherSeries: (params: GetWeatherSeriesParams) =>
-    [...weatherKey.all, "weatherSeries", params] as const,
+  dailyWeatherSeries: (params: GetDailyWeatherSeriesParams) =>
+    [...weatherKey.all, "dailyWeatherSeries", params] as const,
 } as const;
