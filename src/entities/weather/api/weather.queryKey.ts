@@ -2,6 +2,11 @@ import type { GetDailyWeatherSeriesParams } from "../model/DailyWeatherSeriesRep
 
 export const weatherKey = {
   all: ["weather"] as const,
-  dailyWeatherSeries: (params: GetDailyWeatherSeriesParams) =>
-    [...weatherKey.all, "dailyWeatherSeries", params] as const,
+  dailyWeatherSeries: ({ location }: GetDailyWeatherSeriesParams) =>
+    [
+      ...weatherKey.all,
+      "dailyWeatherSeries",
+      location?.coordinates?.lat ?? null,
+      location?.coordinates?.lon ?? null,
+    ] as const,
 } as const;
