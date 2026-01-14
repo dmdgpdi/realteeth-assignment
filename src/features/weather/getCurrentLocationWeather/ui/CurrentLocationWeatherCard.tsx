@@ -120,7 +120,6 @@ export function CurrentLocationWeatherCard() {
             <span className="text-sm">시간대별 기온</span>
             <div className="flex gap-4 overflow-x-auto scrollbar-none py-2">
               {weathers.map((weather, idx) => {
-                console.log("weather", weather);
                 const hourTemp = formatTemperature(weather.temperature);
                 const text = `${hourTemp.isNegative ? "-" : ""}${hourTemp.value}${hourTemp.unit}`;
 
